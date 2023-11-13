@@ -1,0 +1,23 @@
+---
+import Input from '$/components/form.input.astro';
+import Submit from '$/components/form.submit.astro';
+import {processSignin, type UseForm} from '$/lib/server/utils';
+import type {Signin} from '$/lib/utils';
+
+export const partial = true;
+
+let {formy} = Astro.props;
+if (!formy) formy = await processSignin(Astro);
+
+const {form} = formy;
+if (Astro.request.method === 'POST' && form.valid) Astro.response.headers.set('HX-Refresh', 'true');
+
+export type Props = {formy: UseForm<Signin>};
+---
+
+<form id="signin" method="post" class="flex w-full flex-col">
+  {form.errors.formErrors.length > 0 && <div class="alert alert-error">{form.errors.formErrors.join('<br />')}</div>}
+  <Input {form} name="email" type="email" label="Courriel" autocomplete="username" />
+  <Input {form} name="password" type="password" label="Mot de passe" autocomplete="current-password" />
+  <Submit {form} label="Je me connecte" />
+</form>

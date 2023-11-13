@@ -1,0 +1,34 @@
+---
+import Layout from '$/components/layout.astro';
+import {processSignout} from '$/lib/server/utils';
+import {Picture} from 'astro:assets';
+import Signout from './partials/signout.astro';
+
+const session = await Astro.locals.auth.validate();
+if (!session) return Astro.redirect('/connexion', 302);
+
+const fullname = `${session.user.forename} ${session.user.surname.toUpperCase()}`;
+
+const formy = await processSignout(Astro);
+if (Astro.request.method === 'POST' && formy.form.valid) return Astro.redirect('/connexion', 302);
+---
+
+<Layout title="Accueil">
+  <section class="flex min-h-screen items-center justify-center px-4">
+    <div class="card card-bordered w-full max-w-lg bg-neutral text-neutral-content shadow-md">
+      <div class="card-body items-center text-center">
+        <h1 class="card-title">Bienvenue {fullname}</h1>
+        <Picture
+          src={session.user.avatar}
+          formats={['avif', 'webp']}
+          widths={[224, 448, 896]}
+          sizes="(min-width: 548px) 448px, calc(100vw - 96px)"
+          alt="Avatar"
+          width={3888}
+          height={5184}
+        />
+        <Signout {formy} />
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,34 @@
+---
+import type {Form} from '$/lib/server/utils';
+import type {HTMLAttributes} from 'astro/types';
+const {form, label, name, type = 'text', ...r} = Astro.props;
+
+const controlId = `${form.id}_${name}`;
+const id = `${controlId}_input`;
+const url = `/partials/${form.id}`;
+const value = form.data[name];
+const errors = form.errors.fieldErrors[name];
+
+type Props = Omit<HTMLAttributes<'input'>, 'form'> & {form: Form; label: string; name: string};
+---
+
+<div id={controlId} hx-select={`#${controlId}`} class="form-control">
+  <label for={id} class="label">
+    <span class:list={['label-text', errors && 'text-error']}>{label}</span>
+  </label>
+  <input
+    {...r}
+    {type}
+    {id}
+    {name}
+    {value}
+    hx-patch={url}
+    hx-target="closest div"
+    hx-swap="outerHTML"
+    hx-trigger="blur, input changed delay:500ms"
+    class:list={['input input-bordered', errors && 'input-error']}
+  />
+  <label for={id} class="label">
+    <span class="label-text-alt text-error">{errors}</span>
+  </label>
+</div>

@@ -1,0 +1,23 @@
+---
+import Layout from '$/components/layout.astro';
+import {processSignup} from '$/lib/server/utils';
+import Signup from './partials/signup.astro';
+
+const session = await Astro.locals.auth.validate();
+if (session) return Astro.redirect('/', 302);
+
+const formy = await processSignup(Astro);
+if (Astro.request.method === 'POST' && formy.form.valid) return Astro.redirect('/', 302);
+---
+
+<Layout title="Inscription">
+  <section class="flex min-h-screen items-center justify-center">
+    <div class="card card-bordered w-full max-w-md bg-neutral text-neutral-content shadow-md">
+      <div class="card-body items-center text-center">
+        <h1 class="card-title">Inscription</h1>
+        <Signup {formy} />
+        <a href="/connexion" hx-boost="true" class="btn btn-link self-end px-0">Je me connecte</a>
+      </div>
+    </div>
+  </section>
+</Layout>

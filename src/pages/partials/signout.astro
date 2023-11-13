@@ -1,0 +1,18 @@
+---
+import Submit from '$/components/form.submit.astro';
+import {processSignout, type UseForm} from '$/lib/server/utils';
+
+export const partial = true;
+
+let {formy} = Astro.props;
+if (!formy) formy = await processSignout(Astro);
+
+const {form} = formy;
+if (Astro.request.method === 'POST' && form.valid) Astro.response.headers.set('HX-Refresh', 'true');
+
+export type Props = {formy: UseForm<undefined>};
+---
+
+<form id="signout" method="post">
+  <Submit {form} label="Je me déconnecte" />
+</form>

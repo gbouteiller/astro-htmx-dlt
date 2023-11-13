@@ -1,0 +1,20 @@
+---
+import type {Dict, Form} from '$/lib/server/utils';
+
+const {form, label} = Astro.props;
+const url = `/partials/${form.id}`;
+type Props<T extends Dict | undefined = Dict> = {form: Form<T>; label: string};
+---
+
+<button type="submit" class="btn btn-primary mt-8" hx-post={url} hx-target={`#${form.id}`} hx-swap="outerHTML">
+  <span class="relative">
+    {label}
+    <span class="htmx-indicator loading loading-dots loading-xs absolute ml-1 mt-0.5"></span>
+  </span>
+</button>
+
+<style>
+  .htmx-indicator {
+    display: none;
+  }
+</style>
